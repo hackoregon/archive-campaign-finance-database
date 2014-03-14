@@ -34,7 +34,8 @@ for f in os.listdir('scraped_data/fins'):
             fin = pandas.read_excel(os.path.join('scraped_data/fins', f), 'ORESTAR Export', index_col=0)
             fin = fin.where((pandas.notnull(fin)), None)
             fin = fin.reset_index()
-        except Exception:
+        except Exception, e:
+            print e
             continue
         print "inserting %s" % f
         tmpl = ", ".join(["%s" for i in range(len(fin.columns))])

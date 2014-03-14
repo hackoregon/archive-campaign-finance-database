@@ -29,16 +29,26 @@ done
 for year in scraped_data/comms/*.xls
 do
     echo "fetching financials for $year"
-    for comm in $(in2csv $year | csvcut -c 1 | tail -n +2)
+    for comm_id in $(in2csv $year | csvcut -c 1 | tail -n +2)
     do
-        if [ ! -f scraped_data/fins/$comm.xls ]; then
-            echo "searching $comm"
-            curl -s -b cookies -o /dev/null "https://secure.sos.state.or.us/orestar/gotoPublicTransactionSearchResults.do?cneSearchFilerCommitteeId=$comm"
-            echo "downloading $comm"
-#        curl -s -b cookies 'https://secure.sos.state.or.us/orestar/XcelCNESearch' | in2csv -f xls > scraped_data/fins/$comm.csv
-            curl -s -b cookies 'https://secure.sos.state.or.us/orestar/XcelCNESearch' > scraped_data/fins/$comm.xls
+        if [ ! -f scraped_data/fins/$comm_id-0.xls ]; then
+            echo "searching $comm_id"
+            counter=0
+            last_tran='01/01/1980'
+            while true; do
+                echo "searching $comm_id from $last_tran"
+                curl -s -b cookies -o /dev/null "https://secure.sos.state.or.us/orestar/gotoPublicTransactionSearchResults.do?cneSearchFilerCommitteeId=$comm_id&cneSearchTranStartDate=$last_tran"
+                echo "downloading $comm_id"
+                curl -s -b cookies 'https://secure.sos.state.or.us/orestar/XcelCNESearch' > scraped_data/fins/$comm_id-$counter.xls
+                if [ $(in2csv scraped_data/fins/$comm_id-$counter.xls | wc -l) = 5000 ]; then
+                    let counter=counter+1
+                    last_tran=$(in2csv scraped_data/fins/$comm_id-$counter.xls | csvcut -c "Tran Date" | head -n 2 | tail -n 1)
+                else
+                    break
+                fi
+            done
         else
-            echo "skipping $comm"
+            echo "skipping $comm_id"
         fi
     done
 done
