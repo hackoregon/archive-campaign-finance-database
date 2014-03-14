@@ -20,6 +20,7 @@ comms = load_xls('scraped_data/comms', 'Committee Search Result').reset_index().
 comms = comms.where((pandas.notnull(comms)), None)
 
 for i, row in comms.iterrows():
+    print "comm ", i
     tmpl = ", ".join(["%s" for i in range(len(comms.columns))])
     cmd = "INSERT INTO raw_committees VALUES (%s) " % tmpl
     cur.execute(cmd, tuple(row.values))

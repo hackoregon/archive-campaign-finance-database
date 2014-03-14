@@ -1,4 +1,4 @@
 virtualenv .virt --distribute  --system-site-packages
 . .virt/bin/activate
-pip install pandas xlrd ipython
+pip install pandas xlrd ipython csvkit psycopg2
 
