@@ -1,0 +1,78 @@
+
+DROP TABLE IF EXISTS raw_committee_transactions;
+DROP TABLE IF EXISTS raw_committees;
+
+
+CREATE TABLE raw_committees (
+	"Committee Id" INTEGER PRIMARY KEY,
+	"Committee Name" VARCHAR NOT NULL,
+	"Committee Type" VARCHAR NOT NULL,
+	"Committee SubType" VARCHAR,
+	"Candidate Office" VARCHAR,
+	"Candidate Office Group" VARCHAR,
+	"Filing Date" DATE NOT NULL,
+	"Organization Filing Date" DATE NOT NULL,
+	"Treasurer First Name" VARCHAR,
+	"Treasurer Last Name" VARCHAR,
+	"Treasurer Mailing Address" VARCHAR,
+	"Treasurer Work Phone" VARCHAR,
+	"Treasurer Fax" VARCHAR,
+	"Candidate First Name" VARCHAR,
+	"Candidate Last Name" VARCHAR,
+	"Candidate Maling Address" VARCHAR,
+	"Candidate Work Phone" VARCHAR,
+	"Candidate Residence Phone" VARCHAR,
+	"Candidate Fax" VARCHAR,
+	"Candidate Email" VARCHAR,
+	"Active Election" VARCHAR,
+	"Measure" VARCHAR,
+        "last_updated" TIMESTAMP
+);
+
+
+CREATE TABLE raw_committee_transactions (
+	"Tran Id" INTEGER PRIMARY KEY,
+	"Original Id" INTEGER NOT NULL,
+	"Tran Date" DATE NOT NULL,
+	"Tran Status" VARCHAR NOT NULL,
+	"Filer" VARCHAR,
+	"Contributor/Payee" VARCHAR,
+	"Sub Type" VARCHAR NOT NULL,
+	"Amount" FLOAT NOT NULL,
+	"Aggregate Amount" FLOAT,
+	"Contributor/Payee Committee ID" INTEGER REFERENCES raw_committees ("Committee Id"),
+	"Filer Id" INTEGER REFERENCES raw_committees ("Committee Id"),
+	"Attest By Name" VARCHAR,
+	"Attest Date" DATE,
+	"Review By Name" VARCHAR,
+	"Review Date" DATE,
+	"Due Date" DATE,
+	"Occptn Ltr Date" VARCHAR,
+	"Pymt Sched Txt" VARCHAR,
+	"Purp Desc" VARCHAR,
+	"Intrst Rate" VARCHAR,
+	"Check Nbr" VARCHAR,
+	"Tran Stsfd Ind" BOOLEAN,
+	"Filed By Name" VARCHAR,
+	"Filed Date" DATE,
+	"Addr book Agent Name" VARCHAR,
+	"Book Type" VARCHAR,
+	"Title Txt" VARCHAR,
+	"Occptn Txt" VARCHAR,
+	"Emp Name" VARCHAR,
+	"Emp City" VARCHAR,
+	"Emp State" VARCHAR,
+	"Employ Ind" BOOLEAN,
+	"Self Employ Ind" BOOLEAN,
+	"Addr Line1" VARCHAR,
+	"Addr Line2" VARCHAR,
+	"City" VARCHAR,
+	"State" VARCHAR,
+	"Zip" INTEGER,
+	"Zip Plus Four" INTEGER,
+	"County" VARCHAR,
+	"Purpose Codes" VARCHAR,
+	"Exp Date" VARCHAR,
+        "last_updated" TIMESTAMP
+);
+
