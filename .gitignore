@@ -36,5 +36,6 @@ nosetests.xml
 .pydevproject
 
 *~
-scraped_data/*
+scraper/cookies
+scraper/scraped_data/*
 .virt/*
