@@ -8,26 +8,32 @@ curl -c cookies -o /dev/null "https://secure.sos.state.or.us/orestar/GotoSearchB
 search_page="https://secure.sos.state.or.us/orestar/CommitteeSearchSecondPage.do"
 dump_page="https://secure.sos.state.or.us/orestar/XcelSooSearch"
 
-for year in $(seq 2016 -1 2015)
+for year in $(seq 2016 -1 1989)
 do
     if [ ! -f scraped_data/comms/$year.xls ]; then
         #  committees
         echo "searching $year"
-        curl -b cookies -o /dev/null --data "yearActive=$year&discontinuedSOO=true&buttonName=electionSearch" $search_page
+        curl -b cookies -o /dev/null --data "yearActive=$year&discontinuedSOO=on&buttonName=electionSearch" $search_page
         echo "downloading $year"
         curl -b cookies $dump_page > scraped_data/comms/$year.xls
 
         # candidate controlled committees
         echo "searching $year"
-        curl -b cookies -o /dev/null --data "yearActive=$year&allCandidateConComm=true&buttonName=electionSearch" $search_page
+        curl -b cookies -o /dev/null --data "yearActive=$year&allCandidateConComm=on&discontinuedSOO=on&buttonName=electionSearch" $search_page
         echo "downloading $year"
         curl -b cookies $dump_page > scraped_data/comms/$year-cc.xls
 
         # slate mailer organizations
         echo "searching $year"
-        curl -b cookies -o /dev/null --data "yearActive=$year&allSlateMailer=true&buttonName=electionSearch" $search_page
+        curl -b cookies -o /dev/null --data "yearActive=$year&allSlateMailer=on&discontinuedSOO=on&buttonName=electionSearch" $search_page
         echo "downloading $year"
         curl -b cookies $dump_page > scraped_data/comms/$year-sl.xls
+
+        # independent expenditure filers
+        echo "searching $year"
+        curl -b cookies -o /dev/null --data "yearActive=$year&allIndpendFilers=on&discontinuedSOO=on&buttonName=electionSearch" $search_page
+        echo "downloading $year"
+        curl -b cookies $dump_page > scraped_data/comms/$year-if.xls
     else
         echo "skipping $year"
     fi
@@ -47,7 +53,7 @@ do
                 echo "downloading $comm_id"
                 curl -b cookies "https://secure.sos.state.or.us/orestar/XcelCNESearch" > scraped_data/fins/$comm_id-$counter.xls
                 if [ $(in2csv scraped_data/fins/$comm_id-$counter.xls | wc -l) = 5000 ]; then
-                    last_tran=$(in2csv scraped_data/fins/$comm_id-$counter.xls | csvcut -e latin1 -c "Tran Date" | tail -n 1)
+                    last_tran=$(in2csv scraped_data/fins/$comm_id-$counter.xls | csvcut -c "Tran Date" | tail -n 1)
                     let counter=counter+1
                 else
                     break
